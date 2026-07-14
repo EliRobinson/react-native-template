@@ -1,0 +1,8 @@
+# Run with: pnpm test:e2e:mobile
+# Requires the Maestro CLI: https://maestro.mobile.dev
+appId: com.yourorg.mobileweb
+---
+- launchApp
+- assertVisible: "Runs on iOS, Android & Web"
+- tapOn: "Tap me"
+- assertVisible: "Count: 1"

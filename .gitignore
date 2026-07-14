@@ -1,0 +1,50 @@
+# deps
+node_modules
+.pnpm-store
+
+# expo
+.expo
+web-build
+dist
+ios
+android
+.eas
+*.orig.*
+
+# deploy
+.vercel
+
+# build
+.turbo
+*.tsbuildinfo
+coverage
+.eslintcache
+
+# env
+.env
+.env.local
+!.env.example
+
+# os
+.DS_Store
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# prisma
+apps/api/prisma/dev.db
+
+# test artifacts
+playwright-report
+test-results
+blob-report
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Claude Code (local machine settings; safe to gitignore)
+.claude/settings.local.json
