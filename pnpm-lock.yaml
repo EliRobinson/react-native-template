@@ -17,6 +17,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^19.4.0
         version: 19.8.1
+      '@repo/config':
+        specifier: workspace:*
+        version: link:packages/config
       husky:
         specifier: ^9.1.0
         version: 9.1.7
@@ -81,15 +84,9 @@ importers:
 
   apps/mobile-web:
     dependencies:
-      '@repo/api-contracts':
-        specifier: workspace:*
-        version: link:../../packages/api-contracts
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@repo/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       '@tanstack/react-query':
         specifier: ^5.51.0
         version: 5.101.2(react@18.2.0)
@@ -99,6 +96,9 @@ importers:
       '@trpc/react-query':
         specifier: ^11.0.0
         version: 11.18.0(@tanstack/react-query@5.101.2(react@18.2.0))(@trpc/client@11.18.0(@trpc/server@11.18.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.18.0(typescript@5.9.3))(react@18.2.0)(typescript@5.9.3)
+      api:
+        specifier: workspace:*
+        version: link:../api
       expo:
         specifier: ~51.0.0
         version: 51.0.39(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(react-native@0.74.5(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
@@ -129,12 +129,6 @@ importers:
       react-native-web:
         specifier: ~0.19.10
         version: 0.19.13(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
-      zustand:
-        specifier: ^4.5.4
-        version: 4.5.7(@types/react@18.2.79)(react@18.2.0)
     devDependencies:
       '@babel/core':
         specifier: ^7.24.0
@@ -172,9 +166,6 @@ importers:
 
   packages/api-contracts:
     dependencies:
-      '@trpc/server':
-        specifier: ^11.0.0
-        version: 11.18.0(typescript@5.9.3)
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -245,10 +236,6 @@ importers:
         version: 5.9.3
 
   packages/utils:
-    dependencies:
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
     devDependencies:
       '@repo/config':
         specifier: workspace:*
@@ -1348,7 +1335,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {'0': node >=0.10.0}
+    engines: {node: '>=0.10.0'}
 
   '@expo/cli@0.18.31':
     resolution: {integrity: sha512-v9llw9fT3Uv+TCM6Xllo54t672CuYtinEQZ2LPJ2EJsCwuTc4Cd2gXQaouuIVD21VoeGQnr5JtJuWbF97sBKzQ==}
@@ -6467,11 +6454,6 @@ packages:
     peerDependencies:
       react: '>=16.8'
 
-  use-sync-external-store@1.6.0:
-    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -6747,21 +6729,6 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
-  zustand@4.5.7:
-    resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
-    engines: {node: '>=12.7.0'}
-    peerDependencies:
-      '@types/react': '>=16.8'
-      immer: '>=9.0.6'
-      react: '>=16.8'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      immer:
-        optional: true
-      react:
-        optional: true
 
 snapshots:
 
@@ -14561,10 +14528,6 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  use-sync-external-store@1.6.0(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-
   util-deprecate@1.0.2: {}
 
   util@0.12.5:
@@ -14825,10 +14788,3 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
-
-  zustand@4.5.7(@types/react@18.2.79)(react@18.2.0):
-    dependencies:
-      use-sync-external-store: 1.6.0(react@18.2.0)
-    optionalDependencies:
-      '@types/react': 18.2.79
-      react: 18.2.0

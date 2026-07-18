@@ -22,12 +22,13 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
-    "turbo": "^2.1.0",
-    "prettier": "^3.3.3",
-    "husky": "^9.1.0",
-    "lint-staged": "^15.2.0",
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.4.0",
+    "@repo/config": "workspace:*",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.0",
     "typescript": "^5.5.4"
   },
   "lint-staged": {

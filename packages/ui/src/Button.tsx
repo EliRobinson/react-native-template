@@ -18,7 +18,7 @@ export function Button({ onPress, children, variant = 'primary', testID }: Butto
     variant === 'primary' ? 'text-white font-semibold' : 'text-gray-900 font-semibold';
 
   return (
-    <Pressable className={styles} onPress={onPress} testID={testID}>
+    <Pressable accessibilityRole="button" className={styles} onPress={onPress} testID={testID}>
       <Text className={textStyles}>{children}</Text>
     </Pressable>
   );

@@ -9,9 +9,6 @@
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
-  "dependencies": {
-    "zod": "^3.23.8"
-  },
   "devDependencies": {
     "@repo/config": "workspace:*",
     "@types/jest": "^29.5.12",

@@ -5,50 +5,54 @@ type-safe API. Use this as a GitHub template for new projects.
 
 ## Stack
 
-| Layer          | Choice                                                    |
-| -------------- | --------------------------------------------------------- |
-| Monorepo       | pnpm workspaces + Turborepo                               |
-| Mobile + Web   | Expo Router (React Native Web) — one app, 3 targets       |
-| Styling        | NativeWind (Tailwind for RN + web)                        |
-| State (server) | TanStack Query via tRPC                                   |
-| State (client) | Zustand                                                   |
-| Forms          | React Hook Form + Zod                                     |
-| API            | Fastify + tRPC                                            |
-| Database       | Prisma + Postgres                                         |
-| Auth           | Clerk (swap for anything — see `apps/api/src/context.ts`) |
-| Validation     | Zod, shared between client and server                     |
-| Lint/format    | ESLint (flat config) + Prettier + Husky + lint-staged     |
-| Unit/component | Jest + React Native Testing Library                       |
-| E2E (web)      | Playwright                                                |
-| E2E (mobile)   | Maestro                                                   |
-| CI             | GitHub Actions + Turborepo remote caching                 |
-| Versioning     | Changesets (per-package changelogs, no npm publish)       |
-| Deploy         | EAS (mobile), Vercel/EAS Hosting (web)                    |
+| Layer          | Choice                                                |
+| -------------- | ----------------------------------------------------- |
+| Monorepo       | pnpm workspaces + Turborepo                           |
+| Mobile + Web   | Expo Router (React Native Web) — one app, 3 targets   |
+| Styling        | NativeWind (Tailwind for RN + web)                    |
+| State (server) | TanStack Query via tRPC                               |
+| API            | Fastify + tRPC                                        |
+| Database       | Prisma + Postgres                                     |
+| Validation     | Zod schemas in `@repo/api-contracts`                  |
+| Lint/format    | ESLint (flat config) + Prettier + Husky + lint-staged |
+| Unit/component | Jest + React Native Testing Library                   |
+| E2E (web)      | Playwright                                            |
+| E2E (mobile)   | Maestro                                               |
+| CI             | GitHub Actions + Turborepo remote caching             |
+| Versioning     | Changesets (per-package changelogs, no npm publish)   |
+| Deploy         | EAS (mobile), Vercel/EAS Hosting (web)                |
+
+Suggested next adds (not wired yet): Clerk (or another auth provider),
+Zustand for client state, React Hook Form for forms.
 
 ## Structure
 
 ```
 apps/
   mobile-web/     Expo Router app — iOS, Android, and web from one codebase
-  api/            Fastify + tRPC server, Prisma schema
+  api/            Fastify + tRPC server, Prisma, router implementation
 packages/
   ui/             Shared components (NativeWind)
-  api-contracts/  tRPC router + Zod schemas — the shared source of truth
-                  for types between client and server
-  utils/          Shared helpers
+  api-contracts/  Shared Zod schemas — the contract between client and server
+  utils/          Shared helpers (use when you have cross-app pure logic)
   config/         Shared ESLint, Tailwind, and tsconfig presets
 ```
 
-The important dependency to understand: `packages/api-contracts` is
-imported by both `apps/api` (the server) and `apps/mobile-web` (the
-client). Add a procedure to the router or a field to a Zod schema, and
-both sides pick up the type change immediately — no codegen step.
+Ownership to copy when you fork:
+
+- **Schemas** live in `packages/api-contracts` (imported by the API, and by
+  the client when you build forms).
+- **Router + Prisma** live in `apps/api`. The client type-imports
+  `AppRouter` from `api` — type-only, so Metro never bundles server code.
+- Add a procedure in `apps/api/src/router.ts` and a schema in
+  `packages/api-contracts` when the input/output shape is shared.
 
 ## Getting started
 
 ```bash
 pnpm install
 cp apps/api/.env.example apps/api/.env   # set DATABASE_URL
+pnpm --filter api prisma:generate
 pnpm --filter api prisma:migrate
 
 pnpm dev:api          # starts the Fastify/tRPC server on :4000
@@ -87,8 +91,8 @@ to keep a clean changelog per package as things evolve.
 1. Rename `mobileweb` / `com.yourorg.mobileweb` in `apps/mobile-web/app.json`.
 2. Set up EAS (`eas init`) for mobile builds/submits.
 3. Point `DATABASE_URL` at a real Postgres instance (Supabase, Neon, RDS, etc.).
-4. Wire up Clerk (or your auth provider) in `apps/api/src/context.ts` and
-   add a `protectedProcedure` in `packages/api-contracts/src/trpc.ts`.
+4. Wire up auth in `apps/api/src/context.ts` and add a `protectedProcedure`
+   in `apps/api/src/trpc.ts`.
 5. Add a `TURBO_TOKEN`/`TURBO_TEAM` secret in GitHub if you want Turborepo
    remote caching in CI (optional but speeds PRs up a lot).
 
@@ -107,8 +111,6 @@ Go through this list before you mark the repo "Template repository" on GitHub:
 - [ ] Replace `yourorg` in `apps/mobile-web/e2e/maestro/flow.yaml`'s `appId` too.
 - [ ] Decide on a real Postgres provider and update `apps/api/.env.example`
       accordingly (don't commit a real `.env` — it's gitignored, keep it that way).
-- [ ] Decide whether Clerk is actually your auth provider; if not, remove the
-      Clerk references in `apps/api/src/env.ts` and `context.ts` and swap in yours.
 - [ ] Confirm `.gitignore` covers your provider's local artifacts (e.g. add
       `.vercel/`, `.eas/` if those tools generate local config you don't want committed).
 - [ ] If you want Turborepo remote caching in CI, add `TURBO_TOKEN` and
@@ -128,9 +130,9 @@ Go through this list before you mark the repo "Template repository" on GitHub:
 
 - **New shared component:** add it to `packages/ui/src`, export from
   `packages/ui/src/index.ts`. It's usable from `apps/mobile-web` immediately.
-- **New API endpoint:** add a Zod schema to `packages/api-contracts/src/schemas`,
-  add a procedure to `packages/api-contracts/src/router.ts`, implement the
-  resolver logic (Prisma calls, etc.) inline or in `apps/api/src`.
+- **New API endpoint:** add a Zod schema to `packages/api-contracts/src/schemas`
+  when the shape is shared; add the procedure in `apps/api/src/router.ts`
+  and talk to Prisma via `ctx.users` (or a new store on `Context`).
 - **Need real SSR/SEO for web later:** the `ui`/`api-contracts`/`utils`
   packages don't know or care what renders them — you can swap the web
   target for a Next.js app without touching shared code.

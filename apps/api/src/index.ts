@@ -1,10 +1,10 @@
 import cors from '@fastify/cors';
-import { appRouter } from '@repo/api-contracts';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
 
 import { createContext } from './context';
 import { env } from './env';
+import { appRouter } from './router';
 
 const server = Fastify({ logger: true });
 
