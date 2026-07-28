@@ -5,3 +5,4 @@ dist
 web-build
 coverage
 pnpm-lock.yaml
+CLAUDE.md
