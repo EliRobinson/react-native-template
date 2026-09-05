@@ -191,6 +191,9 @@ importers:
 
   packages/config:
     dependencies:
+      '@elirobinson/tokens':
+        specifier: ^0.15.0
+        version: 0.15.0
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.10.0(jiti@2.7.0)(supports-color@8.1.1))
@@ -900,6 +903,9 @@ packages:
 
   '@electric-sql/pglite@0.4.3':
     resolution: {integrity: sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ==}
+
+  '@elirobinson/tokens@0.15.0':
+    resolution: {integrity: sha512-dwjDx75j64K4fqhQuqsf5q4A9Nh8dONVADNsFHNQQdFt5HZRWfmxyM5JheePeG4ixCaIvKCQ00aK1XNVWIsfKA==, tarball: https://npm.pkg.github.com/download/@elirobinson/tokens/0.15.0/8711b226c7f0d84f9e47396ddf6630605065e137}
 
   '@esbuild/aix-ppc64@0.28.2':
     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
@@ -6899,6 +6905,8 @@ snapshots:
       '@electric-sql/pglite': 0.4.3
 
   '@electric-sql/pglite@0.4.3': {}
+
+  '@elirobinson/tokens@0.15.0': {}
 
   '@esbuild/aix-ppc64@0.28.2':
     optional: true

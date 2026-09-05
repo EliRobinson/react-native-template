@@ -36,3 +36,4 @@ minimumReleaseAgeExclude:
   - fastify@5.12.3
   - playwright-core@1.63.0
   - playwright@1.63.0
+  - '@elirobinson/tokens@0.15.0'
