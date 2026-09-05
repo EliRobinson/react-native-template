@@ -14,7 +14,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "prepare": "husky"
+    "prepare": "husky",
+    "tokens:sync": "node packages/config/tailwind/sync-tokens.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.2",

@@ -6,9 +6,11 @@
   "exports": {
     "./eslint": "./eslint/index.mjs",
     "./tailwind": "./tailwind/index.js",
-    "./typescript/base": "./typescript/base.json"
+    "./typescript/base": "./typescript/base.json",
+    "./tailwind/tokens.generated.css": "./tailwind/tokens.generated.css"
   },
   "dependencies": {
+    "@elirobinson/tokens": "^0.15.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.10.0",
     "eslint-plugin-react-hooks": "^7.1.1",
