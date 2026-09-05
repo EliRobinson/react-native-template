@@ -20,7 +20,6 @@ type-safe API. Use this as a GitHub template for new projects.
 | E2E (web)      | Playwright                                            |
 | E2E (mobile)   | Maestro                                               |
 | CI             | GitHub Actions + Turborepo remote caching             |
-| Versioning     | Changesets (per-package changelogs, no npm publish)   |
 | Deploy         | EAS (mobile), Vercel/EAS Hosting (web)                |
 
 Suggested next adds (not wired yet): Clerk (or another auth provider),
@@ -87,22 +86,6 @@ Colour, spacing, radii and type come from `@elirobinson/tokens`. Use the utility
 that names the token (`bg-accent`, `text-fg-2`, `rounded-md`) rather than a
 literal value, and run `pnpm tokens:sync` after bumping that package. See
 [AGENTS.md](AGENTS.md#styling-design-system-tokens) for how the bridge works.
-
-## Versioning changes (Changesets)
-
-After any change worth noting, run:
-
-```bash
-pnpm changeset
-```
-
-It'll ask which package(s) changed and whether it's a patch/minor/major,
-then write a small file in `.changeset/`. Commit that alongside your PR.
-When it's merged to `main`, the Release workflow (`.github/workflows/release.yml`)
-opens/updates a "Version Packages" PR that bumps versions and writes
-CHANGELOGs; merging _that_ PR is what finalizes a release. Nothing gets
-published to npm — this is an app template, so changesets are just used
-to keep a clean changelog per package as things evolve.
 
 ## Using this as a template
 
