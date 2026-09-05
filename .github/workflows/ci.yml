@@ -18,6 +18,14 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
 
+      # @elirobinson/tokens comes from GitHub Packages, which the runner has no
+      # credential for by default. Written to ~/.npmrc rather than the repo's
+      # .npmrc so the token never lands in a checked-in file.
+      - name: Authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -43,6 +51,14 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "pnpm"
+      # @elirobinson/tokens comes from GitHub Packages, which the runner has no
+      # credential for by default. Written to ~/.npmrc rather than the repo's
+      # .npmrc so the token never lands in a checked-in file.
+      - name: Authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
         run: pnpm --filter mobile-web exec playwright install --with-deps chromium
