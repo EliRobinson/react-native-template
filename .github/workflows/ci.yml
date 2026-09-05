@@ -27,10 +27,7 @@ jobs:
       # output and still never reaches the request, which fails as a 401 saying
       # no authorization header was set.
       - name: Authenticate to GitHub Packages
-        run: |
-          echo "token length: ${#NODE_AUTH_TOKEN}"
-          echo "token prefix: ${NODE_AUTH_TOKEN:0:4}"
-          pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
