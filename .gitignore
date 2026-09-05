@@ -48,3 +48,6 @@ blob-report
 
 # Claude Code (local machine settings; safe to gitignore)
 .claude/settings.local.json
+
+# Prisma 7 generates the client into the source tree
+apps/api/src/generated/

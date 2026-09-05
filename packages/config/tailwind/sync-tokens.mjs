@@ -1,0 +1,162 @@
+#!/usr/bin/env node
+/**
+ * Regenerates tokens.generated.js from the installed @elirobinson/tokens
+ * package. Run `pnpm tokens:sync` after bumping it.
+ *
+ * Why generate instead of reading the tokens at config time: a Tailwind config
+ * is CommonJS and loaded synchronously, and the design system's parser ships as
+ * ESM. Generating keeps the parsing in this script and leaves the preset a
+ * plain require().
+ *
+ * Why parse the CSS rather than tokens.json: the neutral ramp and every
+ * semantic alias are computed in CSS, so the stylesheets are the only complete
+ * source. We use the package's own parser and colour helpers so this file never
+ * has to restate what a token means.
+ */
+import { createRequire } from 'node:module';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { toHex } from '@elirobinson/tokens/color';
+import { effectiveTokens, parseTokensCss } from '@elirobinson/tokens/parse-tokens-css';
+
+const require = createRequire(import.meta.url);
+const here = dirname(fileURLToPath(import.meta.url));
+
+const sheet = (name) => readFileSync(require.resolve(`@elirobinson/tokens/${name}`), 'utf8');
+
+/**
+ * Lifts the body of every rule whose selector matches `pattern` into a bare
+ * `:root` block. The parser reports the winning value per token but not which
+ * selector won it, so the only way to read the dark and mobile layers is to
+ * re-feed them as if they were the root layer.
+ */
+function liftBlocks(css, pattern) {
+  const out = [];
+  const re = new RegExp(`${pattern}[^{]*\\{`, 'g');
+  let match;
+  while ((match = re.exec(css))) {
+    let depth = 1;
+    let i = re.lastIndex;
+    while (i < css.length && depth > 0) {
+      if (css[i] === '{') depth += 1;
+      else if (css[i] === '}') depth -= 1;
+      i += 1;
+    }
+    out.push(`:root{${css.slice(re.lastIndex, i - 1)}}`);
+  }
+  return out;
+}
+
+/**
+ * oklch() chroma in the neutral ramp is written as `calc(0.002 * var(--n-mult))`.
+ * The parser resolves the var but leaves the calc, which the colour parser
+ * cannot read. Only arithmetic on plain numbers is evaluated; anything else is
+ * left alone so an unexpected expression fails loudly at toHex rather than
+ * quietly here.
+ */
+function evaluateCalc(value) {
+  return value.replace(/calc\(([^()]*)\)/g, (whole, expression) => {
+    if (!/^[\d\s.+\-*/]+$/.test(expression)) return whole;
+    try {
+      const result = Function(`"use strict";return(${expression})`)();
+      return Number.isFinite(result) ? String(result) : whole;
+    } catch {
+      return whole;
+    }
+  });
+}
+
+const palettes = sheet('palettes.css');
+const core = sheet('tokens.css');
+const mobile = sheet('mobile.css');
+
+// The template renders on phones, so the mobile platform layer is the baseline
+// rather than an override — it recuts radii, the small end of the type ramp,
+// gutters and container widths for arm's-length viewing. It changes no colour.
+const mobileLayer = liftBlocks(mobile, ":root\\[data-platform='mobile'\\]");
+const darkLayer = [...liftBlocks(palettes, "\\[data-theme='dark'\\]"), ...liftBlocks(core, "\\[data-theme='dark'\\]")];
+
+const light = effectiveTokens(parseTokensCss([palettes, core, ...mobileLayer]));
+const dark = effectiveTokens(parseTokensCss([palettes, core, ...darkLayer, ...mobileLayer]));
+
+// Which Tailwind scale each non-colour token prefix belongs to. Prefixes that
+// have no React Native equivalent are absent on purpose: shadows (RN uses
+// elevation and shadowOffset, not a CSS shadow string), easing curves, safe-area
+// insets (react-native-safe-area-context owns those) and the neutral dials.
+const SCALES = {
+  '--space-': 'spacing',
+  '--radius-': 'borderRadius',
+  '--fs-': 'fontSize',
+  '--fw-': 'fontWeight',
+  '--lh-': 'lineHeight',
+  '--tr-': 'letterSpacing',
+  '--z-': 'zIndex',
+  '--dur-': 'transitionDuration',
+  '--container-': 'maxWidth',
+};
+
+// The touch-target family keeps its own name in the class, so the 44px
+// primary-control floor reads as `min-h-target` rather than a bare `min-h`.
+// Tailwind builds the class from the scale key, so the keys are `target`,
+// `target-min` and `target-lg`, not DEFAULT/min/lg.
+const TARGET_PREFIX = '--target';
+
+function build(tokens) {
+  const colors = {};
+  const scales = Object.fromEntries(Object.values(SCALES).map((s) => [s, {}]));
+  scales.minHeight = {};
+
+  for (const [name, entry] of tokens) {
+    const value = evaluateCalc(entry.resolved);
+    const hex = toHex(value);
+
+    if (hex) {
+      colors[name.slice(2)] = hex;
+      continue;
+    }
+
+    if (name === TARGET_PREFIX || name.startsWith(`${TARGET_PREFIX}-`)) {
+      scales.minHeight[name.slice(2)] = value;
+      continue;
+    }
+
+    const prefix = Object.keys(SCALES).find((p) => name.startsWith(p));
+    if (prefix) scales[SCALES[prefix]][name.slice(prefix.length)] = value;
+  }
+
+  return { colors, scales };
+}
+
+const lightBuild = build(light);
+const darkBuild = build(dark);
+
+const unconverted = [...light]
+  .filter(([name, entry]) => {
+    const value = evaluateCalc(entry.resolved);
+    if (toHex(value)) return false;
+    return /^(oklch|rgb|hsl|#)/.test(value);
+  })
+  .map(([name]) => name);
+
+if (unconverted.length) {
+  console.error(`Colour tokens that did not convert:\n  ${unconverted.join('\n  ')}`);
+  process.exit(1);
+}
+
+writeFileSync(
+  join(here, 'tokens.generated.js'),
+  `// GENERATED by packages/config/tailwind/sync-tokens.mjs — do not edit.
+// Run \`pnpm tokens:sync\` to refresh after bumping @elirobinson/tokens.
+// Colours are hex because React Native cannot parse oklch(); every other scale
+// is already px or unitless in the source. The preset turns colors/darkColors
+// into :root and .dark:root variable blocks — see tailwind/index.js.
+module.exports = ${JSON.stringify({ colors: lightBuild.colors, darkColors: darkBuild.colors, ...lightBuild.scales }, null, 2)};
+`,
+);
+
+console.log(
+  `tokens:sync wrote ${Object.keys(lightBuild.colors).length} colours (light + dark) and ` +
+    `${Object.entries(lightBuild.scales).map(([k, v]) => `${Object.keys(v).length} ${k}`).join(', ')}`,
+);

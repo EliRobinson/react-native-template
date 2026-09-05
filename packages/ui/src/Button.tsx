@@ -8,14 +8,18 @@ type ButtonProps = {
   testID?: string;
 };
 
-// NativeWind's `className` works identically here whether this renders
-// on iOS, Android, or web (react-native-web) — one component, one style
-// language, three platforms.
+// Every class here names a design system token (@elirobinson/tokens), so the
+// colours follow the system — including the dark values — without this file
+// knowing what any of them are. NativeWind's `className` works identically on
+// iOS, Android and web.
 export function Button({ onPress, children, variant = 'primary', testID }: ButtonProps) {
-  const base = 'rounded-lg px-4 py-3 items-center justify-center';
-  const styles = variant === 'primary' ? `${base} bg-primary` : `${base} bg-gray-200`;
+  // min-h-target is the design system's 44px floor for a primary control.
+  // Without it the padding alone renders a 40pt button, under both the
+  // system's own contract and Apple's HIG minimum.
+  const base = 'min-h-target rounded-md px-4 py-3 items-center justify-center';
+  const styles = variant === 'primary' ? `${base} bg-accent` : `${base} bg-bg-muted`;
   const textStyles =
-    variant === 'primary' ? 'text-white font-semibold' : 'text-gray-900 font-semibold';
+    variant === 'primary' ? 'text-accent-fg font-semibold' : 'text-fg font-semibold';
 
   return (
     <Pressable accessibilityRole="button" className={styles} onPress={onPress} testID={testID}>

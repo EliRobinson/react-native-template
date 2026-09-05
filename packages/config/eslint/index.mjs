@@ -42,6 +42,7 @@ export default [
       '**/.turbo/**',
       '**/web-build/**',
       '**/coverage/**',
+      '**/generated/**',
     ],
   },
 ];

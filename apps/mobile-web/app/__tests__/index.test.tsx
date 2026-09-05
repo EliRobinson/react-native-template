@@ -28,13 +28,14 @@ function renderWithProviders(ui: ReactElement) {
 
 // Component tests run once and pass identically whether this screen
 // eventually renders on iOS, Android, or the web build.
+// RNTL v14 made `render` and `fireEvent` async — both must be awaited.
 describe('HomeScreen', () => {
-  it('increments the counter on tap', () => {
-    renderWithProviders(<HomeScreen />);
+  it('increments the counter on tap', async () => {
+    await renderWithProviders(<HomeScreen />);
 
     expect(screen.getByText('Count: 0')).toBeTruthy();
 
-    fireEvent.press(screen.getByTestId('increment-button'));
+    await fireEvent.press(screen.getByTestId('increment-button'));
     expect(screen.getByText('Count: 1')).toBeTruthy();
   });
 });

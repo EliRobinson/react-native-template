@@ -10,18 +10,20 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=19",
+    "react-native": ">=0.86"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@testing-library/react-native": "^12.7.0",
-    "@types/jest": "^29.5.12",
-    "@types/react": "~18.2.79",
-    "babel-preset-expo": "^11.0.15",
+    "@testing-library/react-native": "^14.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "~19.2.18",
+    "babel-preset-expo": "~57.0.10",
     "jest": "^29.7.0",
-    "jest-expo": "~51.0.0",
-    "nativewind": "^4.0.36",
-    "typescript": "^5.5.4"
+    "jest-expo": "~57.0.5",
+    "nativewind": "^4.2.6",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "typescript": "^6.0.3"
   }
 }

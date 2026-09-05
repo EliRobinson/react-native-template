@@ -10,6 +10,7 @@ type-safe API. Use this as a GitHub template for new projects.
 | Monorepo       | pnpm workspaces + Turborepo                           |
 | Mobile + Web   | Expo Router (React Native Web) — one app, 3 targets   |
 | Styling        | NativeWind (Tailwind for RN + web)                    |
+| Design tokens  | `@elirobinson/tokens` — colour, space, radius, type   |
 | State (server) | TanStack Query via tRPC                               |
 | API            | Fastify + tRPC                                        |
 | Database       | Prisma + Postgres                                     |
@@ -49,6 +50,15 @@ Ownership to copy when you fork:
 
 ## Getting started
 
+Requires **Node 24** (see `.nvmrc`) and **pnpm 11**.
+
+The design system package comes from GitHub Packages, so you need a personal
+access token with `read:packages` in your user-level `~/.npmrc`:
+
+```
+//npm.pkg.github.com/:_authToken=<your token>
+```
+
 ```bash
 pnpm install
 cp apps/api/.env.example apps/api/.env   # set DATABASE_URL
@@ -68,7 +78,15 @@ pnpm test          # Jest unit + component tests
 pnpm test:e2e:web  # Playwright, against the web build
 pnpm --filter mobile-web test:e2e:mobile   # Maestro, needs a simulator/device
 pnpm format        # Prettier write
+pnpm tokens:sync   # regenerate the Tailwind theme from @elirobinson/tokens
 ```
+
+## Styling
+
+Colour, spacing, radii and type come from `@elirobinson/tokens`. Use the utility
+that names the token (`bg-accent`, `text-fg-2`, `rounded-md`) rather than a
+literal value, and run `pnpm tokens:sync` after bumping that package. See
+[AGENTS.md](AGENTS.md#styling-design-system-tokens) for how the bridge works.
 
 ## Versioning changes (Changesets)
 
