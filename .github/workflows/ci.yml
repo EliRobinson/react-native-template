@@ -19,10 +19,15 @@ jobs:
           cache: "pnpm"
 
       # @elirobinson/tokens comes from GitHub Packages, which the runner has no
-      # credential for by default. Written to ~/.npmrc rather than the repo's
-      # .npmrc so the token never lands in a checked-in file.
+      # credential for by default.
+      #
+      # `pnpm config set`, not an echo into ~/.npmrc: pnpm 11 keeps its own
+      # credential store and only sends tokens from there. A token written to
+      # ~/.npmrc is listed back in pnpm's own "authorization settings were found"
+      # output and still never reaches the request, which fails as a 401 saying
+      # no authorization header was set.
       - name: Authenticate to GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
@@ -52,10 +57,15 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
       # @elirobinson/tokens comes from GitHub Packages, which the runner has no
-      # credential for by default. Written to ~/.npmrc rather than the repo's
-      # .npmrc so the token never lands in a checked-in file.
+      # credential for by default.
+      #
+      # `pnpm config set`, not an echo into ~/.npmrc: pnpm 11 keeps its own
+      # credential store and only sends tokens from there. A token written to
+      # ~/.npmrc is listed back in pnpm's own "authorization settings were found"
+      # output and still never reaches the request, which fails as a 401 saying
+      # no authorization header was set.
       - name: Authenticate to GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
