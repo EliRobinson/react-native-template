@@ -6,8 +6,7 @@
   "exports": {
     "./eslint": "./eslint/index.mjs",
     "./tailwind": "./tailwind/index.js",
-    "./typescript/base": "./typescript/base.json",
-    "./tailwind/tokens.generated.css": "./tailwind/tokens.generated.css"
+    "./typescript/base": "./typescript/base.json"
   },
   "dependencies": {
     "@elirobinson/tokens": "^0.15.0",

@@ -78,7 +78,7 @@ tokens are converted ahead of time:
 @elirobinson/tokens (palettes.css + tokens.css + mobile.css)
   -> packages/config/tailwind/sync-tokens.mjs
        -> tokens.generated.js   (Tailwind theme: scales, and colours as var names)
-       -> tokens.generated.css  (:root and .dark blocks with the real hex values)
+            -> the preset's addBase emits :root and .dark:root variable blocks
 ```
 
 - **Run `pnpm tokens:sync` after bumping `@elirobinson/tokens`.** Nothing else
@@ -91,7 +91,18 @@ tokens are converted ahead of time:
 - Colours resolve through `var(--ds-*)` rather than literal hex, which is what
   makes one class (`bg-bg`) pick up the dark value automatically. `darkMode` is
   `'class'` because Expo Router sets the colour scheme programmatically, which
-  NativeWind's default media-query dark mode cannot follow.
+  NativeWind's default media-query dark mode cannot follow. `_layout.tsx` calls
+  `colorScheme.set('system')` — with `'class'`, nothing follows the OS on its own.
+- **The variables are injected via `addBase`, never an `@import`, and that is
+  load-bearing on native.** NativeWind only treats `.dark:root` as a dark
+  root-variable block _after_ it has read the `@cssInterop set darkMode class dark`
+  at-rule that `nativewind/preset` emits — the order is strict, and variables
+  parsed before it silently keep only their light half. An `@import` cannot
+  satisfy that: postcss-import only inlines imports at the top of the file, which
+  is necessarily before that at-rule, and an import moved to the bottom is dropped
+  outright. Both failures are silent, and both look correct on web.
+- Touch targets use `min-h-target` (the design system's `--target`, 44px). Padding
+  alone renders a 40pt control, under both the system's contract and Apple's HIG.
 - `sync-tokens.mjs` **fails** if a colour token does not convert, so a new token
   shape breaks the sync loudly instead of silently dropping a colour.
 

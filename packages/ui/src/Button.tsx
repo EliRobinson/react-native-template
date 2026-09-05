@@ -13,7 +13,10 @@ type ButtonProps = {
 // knowing what any of them are. NativeWind's `className` works identically on
 // iOS, Android and web.
 export function Button({ onPress, children, variant = 'primary', testID }: ButtonProps) {
-  const base = 'rounded-md px-4 py-3 items-center justify-center';
+  // min-h-target is the design system's 44px floor for a primary control.
+  // Without it the padding alone renders a 40pt button, under both the
+  // system's own contract and Apple's HIG minimum.
+  const base = 'min-h-target rounded-md px-4 py-3 items-center justify-center';
   const styles = variant === 'primary' ? `${base} bg-accent` : `${base} bg-bg-muted`;
   const textStyles =
     variant === 'primary' ? 'text-accent-fg font-semibold' : 'text-fg font-semibold';

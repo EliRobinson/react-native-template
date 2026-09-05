@@ -1,8 +1,3 @@
-/* Design system token variables (light + .dark), generated from
-   @elirobinson/tokens. Must come before Tailwind so the utilities that
-   reference these variables have them defined. */
-@import '@repo/config/tailwind/tokens.generated.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
