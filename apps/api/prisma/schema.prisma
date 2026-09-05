@@ -1,10 +1,13 @@
+// Prisma 7: the datasource block no longer carries `url`. The connection
+// string lives in prisma.config.ts (for the CLI) and reaches the client
+// through a driver adapter — see src/context.ts.
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {

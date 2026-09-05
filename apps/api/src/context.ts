@@ -1,8 +1,14 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import type { CreateUserInput, User } from '@repo/api-contracts';
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
 
-const prisma = new PrismaClient();
+import { env } from './env';
+import { PrismaClient } from './generated/prisma/client';
+
+// Prisma 7 takes its runtime connection from a driver adapter rather than
+// from the schema's datasource block.
+const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 export type UserStore = {
   list: () => Promise<User[]>;

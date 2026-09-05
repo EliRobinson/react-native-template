@@ -1,3 +1,38 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Metro's resolver doesn't fully support pnpm's default symlinked/nested
+# node_modules/.pnpm layout (it can't resolve packages like expo-router
+# whose real path lives several directories deeper than the workspace
+# root). Hoisting gives a flat, npm/yarn-style node_modules that Metro
+# resolves correctly, at the cost of pnpm's strict phantom-dependency
+# isolation.
+# pnpm 11 reads this here; the old .npmrc `node-linker=` key is ignored.
+nodeLinker: hoisted
+# pnpm 10+ does not run dependency build scripts unless they are listed here.
+# These five compile native binaries or Prisma engines and genuinely need it.
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  unrs-resolver: true
+# Written by pnpm to let packages newer than your global minimumReleaseAge
+# through. pnpm maintains this list - do not hand-edit it.
+minimumReleaseAgeExclude:
+  - '@changesets/apply-release-plan@8.1.0'
+  - '@changesets/cli@3.0.2'
+  - '@changesets/git@4.0.1'
+  - '@changesets/read@1.0.1'
+  - '@expo/cli@57.0.22'
+  - '@expo/ui@57.0.16'
+  - '@playwright/test@1.63.0'
+  - eslint@10.10.0
+  - expo-modules-core@57.0.16
+  - expo-modules-jsi@57.0.8
+  - expo-router@57.0.19
+  - expo@57.0.20
+  - fastify@5.12.3
+  - playwright-core@1.63.0
+  - playwright@1.63.0
