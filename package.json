@@ -8,7 +8,7 @@
     "dev:api": "turbo run dev --filter=api",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "turbo run test --",
+    "test": "turbo run test",
     "test:e2e:web": "turbo run test:e2e --filter=mobile-web",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
