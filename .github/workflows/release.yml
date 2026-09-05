@@ -24,6 +24,23 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
 
+      # @elirobinson/tokens comes from GitHub Packages, which the runner has no
+      # credential for by default. `pnpm config set`, not an echo into ~/.npmrc:
+      # pnpm 11 keeps its own credential store and only sends tokens from there.
+      # The length check is because an empty secret produces the same 401 as a
+      # missing one, and the registry error names neither the secret nor the repo.
+      - name: Authenticate to GitHub Packages
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NODE_AUTH_TOKEN is empty. Set it with:" \
+                 "gh secret set NODE_AUTH_TOKEN --repo ${{ github.repository }}" \
+                 "(a GitHub token with read:packages)."
+            exit 1
+          fi
+          pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
