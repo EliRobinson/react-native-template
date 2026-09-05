@@ -27,7 +27,7 @@ lives in `packages/*` (`ui`, `api-contracts`, `utils`, `config`).
 | Unit tests       | Jest 29 (`jest-expo` for anything that renders)             |
 | Web E2E          | Playwright · **Mobile E2E** Maestro                         |
 | Lint             | ESLint 10 flat config, shared from `packages/config`        |
-| Releases         | Changesets, Conventional Commits via commitlint + Husky     |
+| Commits          | Conventional Commits via commitlint + Husky                 |
 
 ---
 
@@ -44,7 +44,6 @@ lives in `packages/*` (`ui`, `api-contracts`, `utils`, `config`).
   done. For anything touching the app shell, styling or Metro config, also run
   `pnpm build` — the gates do not exercise the bundler.
 - Follow Conventional Commits — e.g. `fix(api): ...`, `feat(ui): ...`.
-- Add a changeset (`pnpm changeset`) for any user-facing or package-level change.
 - Styling is NativeWind — keep styles in `className`, not `StyleSheet`, unless a
   case genuinely needs it.
 
