@@ -27,9 +27,14 @@ jobs:
       # output and still never reaches the request, which fails as a 401 saying
       # no authorization header was set.
       - name: Authenticate to GitHub Packages
-        run: pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NODE_AUTH_TOKEN is empty. Set it with:" \
+                 "gh secret set NODE_AUTH_TOKEN --repo ${{ github.repository }}" \
+                 "(a GitHub token with read:packages)."
+            exit 1
+          fi
+          pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -65,9 +70,14 @@ jobs:
       # output and still never reaches the request, which fails as a 401 saying
       # no authorization header was set.
       - name: Authenticate to GitHub Packages
-        run: pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NODE_AUTH_TOKEN is empty. Set it with:" \
+                 "gh secret set NODE_AUTH_TOKEN --repo ${{ github.repository }}" \
+                 "(a GitHub token with read:packages)."
+            exit 1
+          fi
+          pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
 
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
