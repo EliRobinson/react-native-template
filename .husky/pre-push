@@ -1,0 +1,4 @@
+pnpm install --frozen-lockfile || {
+  echo "pnpm-lock.yaml is out of date with package.json. Run 'pnpm install' and commit the updated lockfile before pushing." >&2
+  exit 1
+}
